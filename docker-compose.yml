@@ -5,34 +5,6 @@
 version: '3'
 
 services:
-  nginx:
-    image: jwilder/nginx-proxy:alpine
-    labels:
-        com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy: "true"
-    container_name: nginx
-    restart: unless-stopped
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - conf:/etc/nginx/conf.d
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-      - certs:/etc/nginx/certs:ro
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-
-  nginx-letsencrypt:
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    container_name: nginx-letsencrypt
-    restart: unless-stopped
-    depends_on:
-      - nginx
-    volumes:
-      - conf:/etc/nginx/conf.d
-      - vhost:/etc/nginx/vhost.d
-      - html:/usr/share/nginx/html
-      - certs:/etc/nginx/certs:rw
-      - /var/run/docker.sock:/var/run/docker.sock:ro
 
   init-guac-db:
     image: guacamole/guacamole:latest
@@ -59,6 +31,8 @@ services:
   guac:
     image: guacamole/guacamole:latest
     restart: unless-stopped
+    ports:
+      - "8000:8080"
     environment:
       GUACD_HOSTNAME: guacd
       POSTGRES_HOSTNAME: postgres
